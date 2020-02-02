@@ -1,0 +1,21 @@
+{
+  "name": "fs-search-metadata-db",
+  "version": "1.0.0",
+  "description": "This piece of software will allow the user to tag files with metadata, which will also allow the user to search for the files on their computer easier later on without having to use the native file explorere.",
+  "main": "app.js",
+  "scripts": {
+    "start": "electron .",
+    "rebuild": "electron-rebuild -f -m sqlite3"
+  },
+  "author": "Joshua Root",
+  "license": "MIT",
+  "dependencies": {
+    "bootstrap": "^4.4.1",
+    "electron": "^7.1.9",
+    "knex": "^0.20.8",
+    "moment": "^2.24.0"
+  },
+  "devDependencies": {
+    "electron-rebuild": "^1.8.8"
+  }
+}

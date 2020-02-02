@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Filesystem Metadata Search Utility</title>
+        <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';">
+        <link href="./node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    </head>
+    <body>
+        <script>
+            var ipc = require('electron').ipcRenderer;
+
+            let openFilesButton = document.getElementById('add-meta');
+        
+            openFilesButton.addEventListener('click', () => {
+                ipc.send('open-open-file-dialog', 'open');
+            });
+        </script>
+    </body>
+</html>
