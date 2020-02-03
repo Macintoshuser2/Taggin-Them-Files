@@ -7,7 +7,13 @@ let selectedFiles;
 let win;
 
 function createWindow() {
-    win = new BrowserWindow({width: 1080, height: 600, webPreferences: {nodeIntegration: true}});
+    win = new BrowserWindow({
+        width: 1000, 
+        height: 800, 
+        webPreferences: {
+            nodeIntegration: true
+        }
+    });
 
     win.loadURL(url.format({
         pathname: path.join(__dirname, 'index.html'),
@@ -15,32 +21,67 @@ function createWindow() {
         slashes: true
     }));
 
-    win.on('closed', () => { win = null; });
+    win.on('closed', () => { 
+        win = null; 
+    });
 }
 
 const template = [
     {
+        label: 'File',
+        submenu: 
+        [
+            {
+                label: 'Open File or Directory',
+                click() {
+                    openFileOrDirectory();
+                }
+            }
+        ]
+    },
+    {
         role: 'window',
-        submenu: [
+        submenu: 
+        [
             { role: 'minimize' },
             { role: 'close' }
         ]
     }
 ];
 
+if (process.platform === 'darwin') {
+    template.unshift({
+        label: app.getName(),
+        submenu: [
+            { role: 'about' },
+            { type: 'separator' },
+            { role: 'hide' },
+            { role: 'unhide' },
+            { type: 'separator' },
+            { role: 'quit' }
+        ]
+    });
+}
+
 const menu = Menu.buildFromTemplate(template);
 Menu.setApplicationMenu(menu);
 
 app.on('ready', createWindow);
-app.on('window-all-closed', () => { if (process.platform !== 'darwin') { app.quit(); } });
-app.on('activate', () => { if (win === null) { createWindow(); } });
+
+app.on('window-all-closed', () => { 
+    if (process.platform !== 'darwin') { 
+        app.quit(); 
+    } 
+});
+
+app.on('activate', () => { 
+    if (win === null) { 
+        createWindow(); 
+    } 
+});
 
 /* 
-    This is a listener that listens for a message being sent on the 
-    channel called open-open-file-dialog. This message will be sent 
-    from the renderer process.
-
-    When this channel recieves a message, a dialog is opened that 
+    When this method fires, a dialog is opened that 
     allows auser to select multiple files of any type and opens to 
     the user's home directory by default.
 
@@ -52,35 +93,32 @@ app.on('activate', () => { if (win === null) { createWindow(); } });
     execution without error. Otherwise, we print the error that the Promise
     encountered during execution in the console.
 */
-ipcMain.on('open-open-file-dialog', (event) => {
+function openFileOrDirectory() {
     dialog.showOpenDialog(win, { 
         title: "Select File(s)", 
         defaultPath: process.env.HOME,
         buttonLabel: "Choose File(s)", 
-        filters: [{ name: 'All Files', extensions: ['*'] }],
-        properties: ["openFile", "multiSelections", "showHiddenFiles", "openDirectory", ]
+        filters: 
+        [
+            { 
+                name: 'All Files', 
+                extensions: ['*'] 
+            }
+        ],
+        properties: 
+        [
+            "openFile", 
+            "multiSelections", 
+            "showHiddenFiles", 
+            "openDirectory"
+        ]
     }).then(result => {
         selectedFiles = result.filePaths;
 
         if (selectedFiles !== undefined) {
-            fs.open('./db/files.json', 'w', (err, file) => { if (err) { throw err; } });
-
-            fs.readFile('./db/files.json', 'utf8', (err, data) => {
-                if (err) { throw err; }
-
-                if (data.length > 0) {
-                    selectedFilesObjects = JSON.parse(data);
-                    console.log(selectedFilesObjects);
-                }
-            });
-
-            Array.from(selectedFiles).forEach((value, index, array) => {
-                selectedFilesObjects.push({ path: "" + value + "", metadata: [] });
-            });
-
-            fs.writeFile('./db/files.json', JSON.stringify(selectedFilesObjects), (err) => {
-                if (err) { throw err; }
-            });
+            win.webContents.send('picked-files', { selected: selectedFiles });
         }
-    }).catch(err => { console.log(err); });
-});
+    }).catch(err => { 
+        console.log(err); 
+    });
+}
