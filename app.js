@@ -1,4 +1,5 @@
-const { app, BrowserWindow, Menu, MenuItem, ipcMain, dialog } = require('electron');
+const { app, BrowserWindow, Menu, MenuItem, ipcMain, dialog, TouchBar, Tray} = require('electron');
+const { TouchBarButton, TouchBarSpacer } = TouchBar;
 const url = require('url');
 const path = require('path');
 const fs = require('fs');
@@ -12,7 +13,8 @@ function createWindow() {
         height: 800, 
         webPreferences: {
             nodeIntegration: true
-        }
+        },
+        resizable: false
     });
 
     win.loadURL(url.format({
@@ -24,6 +26,12 @@ function createWindow() {
     win.on('closed', () => { 
         win = null; 
     });
+
+    app.accessibilitySupport = true;
+
+    win.webContents.openDevTools();
+    win.setTouchBar(setupTouchBar());
+    setupTrayMenu();
 }
 
 const template = [
@@ -33,6 +41,7 @@ const template = [
         [
             {
                 label: 'Open File or Directory',
+                accelerator: 'CmdOrCtrl+O',
                 click() {
                     openFileOrDirectory();
                 }
@@ -54,10 +63,6 @@ if (process.platform === 'darwin') {
         label: app.getName(),
         submenu: [
             { role: 'about' },
-            { type: 'separator' },
-            { role: 'hide' },
-            { role: 'unhide' },
-            { type: 'separator' },
             { role: 'quit' }
         ]
     });
@@ -114,11 +119,59 @@ function openFileOrDirectory() {
         ]
     }).then(result => {
         selectedFiles = result.filePaths;
-
-        if (selectedFiles !== undefined) {
-            win.webContents.send('picked-files', { selected: selectedFiles });
-        }
+        win.webContents.send('picked-files', { selected: selectedFiles });
     }).catch(err => { 
         console.log(err); 
     });
+}
+
+function setupTouchBar() {
+    const openFileOrDirTBButton = new TouchBarButton({
+        label: 'Open Files or Directory',
+        backgroundColor: '#0000C0',
+        click() {
+            openFileOrDirectory();
+        }
+    });
+
+    const addTagTBButton = new TouchBarButton({
+        label: 'Add Custom Tag',
+        backgroundColor: '#0000C0',
+        click() {
+            win.webContents.send('open-add', '');
+        }
+    });
+
+    const touchBar = new TouchBar({
+        items: [
+            openFileOrDirTBButton,
+            new TouchBarSpacer({ size: 'small' }),
+            addTagTBButton
+        ]
+    });
+
+    return touchBar;
+}
+
+function setupTrayMenu() {
+    let tray = null;
+
+    tray = new Tray('./assets/tray_icon.png');
+
+    const contextMenu = Menu.buildFromTemplate([
+        {
+            label: 'Open Files or Directory',
+            click() {
+                openFileOrDirectory();
+            }
+        },
+        {
+            label: 'Add Custom Tag',
+            click() {
+                win.webContents.send('open-add', '');
+            }
+        }
+    ]);
+
+    tray.setContextMenu(contextMenu);
 }

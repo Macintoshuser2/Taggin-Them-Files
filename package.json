@@ -12,7 +12,9 @@
   "dependencies": {
     "bootstrap": "^4.4.1",
     "electron": "^7.1.9",
-    "jquery": "^3.4.1"
+    "jquery": "^3.4.1",
+    "materialize-css": "^1.0.0-rc.2",
+    "wicg-inert": "github:wicg/inert"
   },
   "devDependencies": {
     "electron-rebuild": "^1.8.8"

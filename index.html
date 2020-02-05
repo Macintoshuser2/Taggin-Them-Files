@@ -6,36 +6,29 @@
         <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';">
         <link href="./node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
         <script src="./node_modules/jquery/dist/jquery.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
-        <style>
-            select {
-                border: 2px solid black;
-                height: 200px;
-            }
-
-            input[type=button] {
-                border: 2px solid darkblue;
-            }
-
-            * {
-                font-family: -apple-system, Roboto, sans-serif;
-            }
-
-            body {
-                overflow-x: hidden;
-            }
-        </style>
+        <script src="./node_modules/wicg-inert/src/inert.js"></script>
+        <link href="./styles/main.css" rel="stylesheet" type="text/css">          
     </head>
     <body>
         <div class="row" style="margin-top: 10px;">
             <div class="col-1"></div>
             <div class="col-5">
-                <select multiple id="paths" class="col-12"></select>
+                <div class="row">
+                    <div class="col-12">
+                        <select multiple id="paths" class="col-12"></select>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="col-12">
+                        <input id="indeterminate-checkbox" type="checkbox">
+                        Show Only File or Directory Names
+                    </label>
+                </div>
             </div>
             <div class="col-5">
                 <div class="row">
                     <div class="col-12">
-                        <select multiple id="metadata" class="col-12">
+                        <select multiple id="metadata" class="c                       ol-12">
                             <option>Description</option>
                             <option>Category</option>
                             <option>Location</option>
@@ -44,22 +37,36 @@
                 </div>
                 <div class="row">
                     <div class="col-12">
-                        <input type="button" id="add-meta" class="btn btn-primary col-12" value="Add Custom Tag" data-toggle="modal" data-target="#meta-modal">
+                        <input type="button" id="add-meta" class="btn btn-primary col-12" value="Add Custom Tag">
                     </div>
                 </div>
             </div>
             <div class="col-1"></div>
         </div>
-        <script>
-            var ipc = require('electron').ipcRenderer;
 
-            ipc.on('picked-files', (event, data) => {
-                
-            });
+        <div class="dialog" role="dialog" aria-labelledby="modal-title">
+            <div class="dialog-window">
+                <div>
+                    <h2 id="dialog-title">Add Custom Tag</h2>
+                </div>
+                <div>
+                    <p>Please enter the name of the custom tag you would like to add.</p>
+                    <div class="row">
+                        <input class="col-8" id="tag-name-input" style="margin: 5px auto; border: 1px solid black;" type="text" placeholder="Custom Tag Name">
+                    </div>
+                    <div class="row">
+                        <div class="col-1"></div>
+                        <button class="btn btn-primary col-4" id="add-tag-button">Add Tag</button>
+                        <div class="col-2"></div>
+                        <button class="btn btn-danger col-4" id="close-button">Close</button>
+                        <div class="col-1"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="dialog-mask"></div>
+        </div>
 
-            document.getElementById('add-meta').addEventListener('click', () => {
-                
-            });
-        </script>
+        <script src="./js/dialog.js"></script>
+        <script src="./js/main.js"></script>        
     </body>
 </html>
