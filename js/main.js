@@ -5,15 +5,20 @@ var selectBox;
 var fullPaths = [];
 var fileNamesOnly = [];
 
-var checkbox = document.getElementById('indeterminate-checkbox');
+var toggleButton = document.getElementById('toggle-file-view');
+
+toggleButton.disabled = true;
+toggleButton.setAttribute('aria-disabled', 'true');
 
 ipc.on('picked-files', (event, data) => {
+    toggleButton.disabled = false;
+    toggleButton.setAttribute('aria-disabled', 'false');
+
     selectBox = document.getElementById('paths');
     fullPaths = data.selected;
 
     for (var i = 0; i < data.selected.length; i++) {
         var length = data.selected[i].split('\\').length - 1
-
 
         fileNamesOnly.push(data.selected[i].split('\\')[length]);
     }
@@ -22,16 +27,22 @@ ipc.on('picked-files', (event, data) => {
         selectBox.innerHTML += `<option>${fullPaths[i]}</option>`;
     }
 
-    checkbox.addEventListener('click', () => {
-        changeFileView(checkbox, selectBox);
+    toggleButton.addEventListener('click', () => {
+        changeFileView(toggleButton, selectBox);
     });
 });
 
-function changeFileView(checkboxToObserve, selectBoxToChange) {
-    if (checkboxToObserve.checked) {
+function changeFileView(buttonToObserve, selectBoxToChange) {
+    buttonToObserve.classList.toggle("on");
+
+    if (buttonToObserve.classList.contains("on")) {
         changeTo(selectBoxToChange, fileNamesOnly);
+        buttonToObserve.value = "Show Only Names (ON)";
+        buttonToObserve.setAttribute('aria-pressed', 'true');
     } else {
         changeTo(selectBoxToChange, fullPaths);
+        buttonToObserve.value = "Show Only Names (OFF)";
+        buttonToObserve.setAttribute('aria-pressed', 'false');
     }
 }
 

@@ -19,6 +19,10 @@ p, h2 {
     text-align: center;
 }
 
+#toggle-file-view[aria-pressed="true"] {
+    border: 5px darkblue inset;
+}
+
 .dialog {
     display: none;
 }

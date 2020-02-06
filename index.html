@@ -5,30 +5,35 @@
         <title>Filesystem Metadata Search Utility</title>
         <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';">
         <link href="./node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-        <script src="./node_modules/jquery/dist/jquery.min.js"></script>
         <script src="./node_modules/wicg-inert/src/inert.js"></script>
         <link href="./styles/main.css" rel="stylesheet" type="text/css">          
     </head>
     <body>
+        <div class="row" style="margin: 10px;">
+            <h3 aria-hidden="true" id="paths-heading" class="col-6" style="text-align: center;">Paths/File Names</h3>
+            <h3 aria-hidden="true" id="tags" class="col-6" style="text-align: center;">List of Tags</h3>
+        </div>
         <div class="row" style="margin-top: 10px;">
             <div class="col-1"></div>
             <div class="col-5">
                 <div class="row">
                     <div class="col-12">
-                        <select multiple id="paths" class="col-12"></select>
+                        <select aria-live="polite" aria-labelledby="paths-heading" multiple id="paths" class="col-12"></select>
                     </div>
                 </div>
                 <div class="row">
-                    <label class="col-12">
-                        <input id="indeterminate-checkbox" type="checkbox">
-                        Show Only File or Directory Names
-                    </label>
+                    <div class="col-6">
+                        <input type="button" id="toggle-file-view" class="btn btn-primary" value="Show Only Names (Off)">
+                    </div>
+                    <div class="col-6">
+                        <input aria-live="polite" aria-controls="paths" type="button" id="add-meta" class="btn btn-primary col-12" value="Add Custom Tag">
+                    </div>
                 </div>
             </div>
             <div class="col-5">
                 <div class="row">
                     <div class="col-12">
-                        <select multiple id="metadata" class="c                       ol-12">
+                        <select aria-live="polite" aria-labelledby="tags" multiple id="metadata" class="col-12">
                             <option>Description</option>
                             <option>Category</option>
                             <option>Location</option>
