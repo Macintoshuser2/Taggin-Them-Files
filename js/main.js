@@ -1,5 +1,6 @@
 var ipc = require('electron').ipcRenderer;
-            
+var os = require('os');            
+
 var selectBox;
 
 var fullPaths = [];
@@ -17,10 +18,18 @@ ipc.on('picked-files', (event, data) => {
     selectBox = document.getElementById('paths');
     fullPaths = data.selected;
 
-    for (var i = 0; i < data.selected.length; i++) {
-        var length = data.selected[i].split('\\').length - 1
+    if (os.platform().includes('win')) {
+        for (var i = 0; i < data.selected.length; i++) {
+            var length = data.selected[i].split('\\').length - 1
 
-        fileNamesOnly.push(data.selected[i].split('\\')[length]);
+            fileNamesOnly.push(data.selected[i].split('\\')[length]);
+        }
+    } else {
+        for (var i = 0; i < data.selected.length; i++) {
+            var length = data.selected[i].split('/').length - 1
+
+            fileNamesOnly.push(data.selected[i].split('/')[length]);
+        }
     }
 
     for (var i = 0; i < fullPaths.length; i++) {

@@ -20,7 +20,8 @@ p, h2 {
 }
 
 #toggle-file-view[aria-pressed="true"] {
-    border: 5px darkblue inset;
+    border: 3px darkblue inset;
+    background-color: darkblue;
 }
 
 .dialog {
