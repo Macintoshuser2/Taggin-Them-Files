@@ -18,23 +18,20 @@ ipc.on('picked-files', (event, data) => {
     selectBox = document.getElementById('paths');
     fullPaths = data.selected;
 
-    if (os.platform().includes('win')) {
-        for (var i = 0; i < data.selected.length; i++) {
-            var length = data.selected[i].split('\\').length - 1
+    var delimiter = os.platform() === "darwin" || os.platform() === "linux" ? '/' : '\\';
 
-            fileNamesOnly.push(data.selected[i].split('\\')[length]);
-        }
-    } else {
-        for (var i = 0; i < data.selected.length; i++) {
-            var length = data.selected[i].split('/').length - 1
+    Array.from(data.selected).forEach(element => {
+        var filePathSplit = element.split(delimiter);
+        var fileName = filePathSplit[filePathSplit.length - 1];
 
-            fileNamesOnly.push(data.selected[i].split('/')[length]);
-        }
-    }
+        fileNamesOnly.push(fileName);
 
-    for (var i = 0; i < fullPaths.length; i++) {
-        selectBox.innerHTML += `<option>${fullPaths[i]}</option>`;
-    }
+        console.log(element);
+    });
+
+    Array.from(fullPaths).forEach(element => {
+        selectBox.innerHTML += `<option>${element}</option>`;
+    });
 
     toggleButton.addEventListener('click', () => {
         changeFileView(toggleButton, selectBox);

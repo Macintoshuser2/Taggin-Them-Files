@@ -119,10 +119,56 @@ function openFileOrDirectory() {
         ]
     }).then(result => {
         selectedFiles = result.filePaths;
-        win.webContents.send('picked-files', { selected: selectedFiles });
+
+        var files;
+        var folders = getDirectories(selectedFiles);
+        
+        Array.from(folders).forEach(element => {
+            const results = getAllFiles(element);
+
+            Array.from(results).forEach(resultsElement => {
+                files.push(resultsElement);
+            });
+        });
+        
+        win.webContents.send('picked-files', { selected: files });
     }).catch(err => { 
         console.log(err); 
     });
+}
+
+const getAllFiles = function(dirPath, arrayOfFiles) {
+    var files = fs.readdirSync(dirPath);
+
+    arrayOfFiles = arrayOfFiles || [];
+
+    files.forEach(function(file) {
+        if (fs.statSync(dirPath + "/" + file).isDirectory()) {
+            arrayOfFiles = getAllFiles(dirPath + "/" + file, arrayOfFiles);
+        } else {
+            arrayOfFiles.push(path.join(__dirname, dirPath, "/", file));
+        }
+    });
+
+    return arrayOfFiles;
+}
+
+function getDirectories(filesToAnalyze) {
+    let directories = [];
+
+    Array.from(filesToAnalyze).forEach(element => {
+        try {
+            var stat = fs.lstatSync(element);
+
+            if (stat.isDirectory()) {
+                directories.push(element);
+            }
+        } catch (error) {
+            return [];
+        }
+    });
+
+    return directories;
 }
 
 function setupTouchBar() {
