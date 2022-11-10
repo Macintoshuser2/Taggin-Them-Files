@@ -11,7 +11,7 @@
   "license": "MIT",
   "dependencies": {
     "bootstrap": "^4.4.1",
-    "electron": "^7.1.9",
+    "electron": "^18.3.7",
     "wicg-inert": "github:wicg/inert"
   },
   "devDependencies": {
